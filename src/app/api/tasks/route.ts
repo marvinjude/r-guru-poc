@@ -14,7 +14,7 @@ interface CreateTaskParams extends RequestParams {
   };
 }
 
-const INTEGRATION_WEBHOOK_URL = "https://api.integration.app/webhooks/app-events/96ab881b-a391-43cb-8e5a-27aefd91421e";
+const INTEGRATION_WEBHOOK_URL = "https://api.integration.app/webhooks/app-events/3ee7ee5d-dec8-4786-a7fa-d541495744e6";
 
 const notifyIntegrationApp = async (task: any, customerId: string) => {
   try {

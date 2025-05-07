@@ -5,7 +5,7 @@ import type { AuthCustomer } from "@/lib/auth";
 import { DataOrigin } from "@/models/common";
 import { authenticatedFetcher } from "@/lib/fetch-utils";
 
-const INTEGRATION_WEBHOOK_URL = "https://api.integration.app/webhooks/app-events/96ab881b-a391-43cb-8e5a-27aefd91421e";
+const INTEGRATION_WEBHOOK_URL = "https://api.integration.app/webhooks/app-events/3ee7ee5d-dec8-4786-a7fa-d541495744e6";
 
 interface TaskUpdateParams extends RequestParams {
   params: {
