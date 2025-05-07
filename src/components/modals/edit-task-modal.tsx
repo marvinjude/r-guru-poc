@@ -43,14 +43,11 @@ export function EditTaskModal({ task, trigger }: EditTaskModalProps) {
       toast.success("Task updated successfully");
       setIsOpen(false);
 
-
-          // Optimistically update the cache
+      // Update cache
       await mutate((data: ITask[] | undefined) => {
         if (!data) return [response];
         return data.map((t) => (t._id === task._id ? response : t));
       }, false);
-
-      // Revalidate the data
       await mutate();
     } catch (error) {
       toast.error(

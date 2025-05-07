@@ -12,7 +12,9 @@ export interface ITask {
   updatedAt: Date;
   status: string;
   projectId?: string;
-  externalId?: string;
+  externalId: string;
+  originalId?: string;
+  userId?: string;
 }
 
 const TaskStatus = ["todo", "in_progress", "done"] as const;
@@ -21,12 +23,13 @@ const taskSchema = new mongoose.Schema<ITask>(
   {
     externalId: {
       type: String,
-      default: null,
+      unique: true,
     },
-    origin: {
+    originalId: {
       type: String,
-      required: true,
-      enum: Object.values(DataOrigin),
+    },
+    userId: {
+      type: String,
     },
     title: {
       type: String,
@@ -38,13 +41,13 @@ const taskSchema = new mongoose.Schema<ITask>(
       type: String,
       default: null,
     },
-    assigneeId: {
-      type: String,
-      default: null,
-    },
     status: {
       type: String,
-      enum: TaskStatus,
+    },
+    origin: {
+      type: String,
+      required: true,
+      enum: Object.values(DataOrigin),
     },
   },
   {
@@ -53,6 +56,7 @@ const taskSchema = new mongoose.Schema<ITask>(
 );
 
 if (models.Task) {
+  models.Task.collection.dropIndexes().catch(console.error);
   delete models.Task;
 }
 

@@ -17,6 +17,7 @@ import useSWR from "swr";
 import { authenticatedFetcher } from "@/lib/fetch-utils";
 import { ITaskUser } from "@/models/task-user";
 import { IProject } from "@/models/project";
+import { useProjects } from "@/hooks/use-projects";
 
 interface TaskFormProps {
   initialData?: {
@@ -59,7 +60,10 @@ export function TaskForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: taskUsers } = useSWR<ITaskUser[]>("/api/task-users", authenticatedFetcher);
-  const { data: projects } = useSWR<IProject[]>("/api/projects", authenticatedFetcher);
+  const { data: projects } = useProjects();
+
+  // Find the selected project's statuses
+  const projectStatuses = projects?.find(p => p._id === projectId)?.statuses || [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,20 +111,19 @@ export function TaskForm({
         <Label htmlFor="status" className="text-gray-700">
           Status
         </Label>
-        <Select value={status} onValueChange={setStatus}>
-          <SelectTrigger className="bg-white border-gray-200 text-gray-900">
-            <SelectValue placeholder="Select status" />
+        <Select
+          value={status}
+          onValueChange={(value) => setStatus(value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a status" />
           </SelectTrigger>
-          <SelectContent className="bg-white border-gray-200">
-            <SelectItem value="todo" className="text-gray-900">
-              To Do
-            </SelectItem>
-            <SelectItem value="in_progress" className="text-gray-900">
-              In Progress
-            </SelectItem>
-            <SelectItem value="done" className="text-gray-900">
-              Done
-            </SelectItem>
+          <SelectContent>
+            {projectStatuses.map((status) => (
+              <SelectItem key={status.id} value={status.id}>
+                {status.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -136,7 +139,7 @@ export function TaskForm({
           </SelectTrigger>
           <SelectContent className="bg-white border-gray-200">
             {taskUsers?.map((user) => (
-              <SelectItem key={user.email} value={user._id} className="text-gray-900">
+              <SelectItem key={user.email} value={user.externalId} className="text-gray-900">
                 {user.fullName}
               </SelectItem>
             ))}
@@ -149,13 +152,16 @@ export function TaskForm({
             Project
           </Label>
         </div>
-        <Select value={projectId} onValueChange={setProjectId}>
-          <SelectTrigger className="bg-white border-gray-200 text-gray-900">
-            <SelectValue placeholder="Select project" />
+        <Select
+          value={projectId}
+          onValueChange={(value) => setProjectId(value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select a project" />
           </SelectTrigger>
-          <SelectContent className="bg-white border-gray-200">
+          <SelectContent>
             {projects?.map((project) => (
-              <SelectItem key={project._id} value={project._id} className="text-gray-900">
+              <SelectItem key={project._id} value={project._id}>
                 {project.name}
               </SelectItem>
             ))}
